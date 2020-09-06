@@ -2,8 +2,11 @@ const path = require("path");
 const webpack = require("webpack");
 
 module.exports = {
-  entry: "./src/index.js",
+  entry: {
+    app: './src/index.jsx'
+  },
   mode: "development",
+  devtool: 'inline-source-map',
   module: {
     rules: [
       {
@@ -28,7 +31,7 @@ module.exports = {
     contentBase: path.join(__dirname, "public/"),
     port: 3000,
     publicPath: "http://localhost:3000/dist/",
-    hotOnly: true
+    hot: true
   },
   plugins: [new webpack.HotModuleReplacementPlugin()]
 };

@@ -1,3 +1,79 @@
-.App {
-    margin: 1rem;
+@keyframes appear {
+    0% {
+        opacity: 0;
+        transform: scale(0);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+@keyframes pop {
+    0% {
+        transform: scale(0);
+    }
+
+    50% {
+        transform: scale(1.2);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+.board-container {
+    width: 499px;
+    height: 499px;
+    margin: auto;
+    background-color: #bbada0;
+    border-radius: 6px;
+    padding: 15px 15px 0;
+    box-sizing: border-box;
+    position: relative;
+}
+
+.grid-container {
+    display: flex;
+    flex-wrap: wrap;
+}
+.grid-cell {
+    margin-bottom: 15px;
+    width: 106px;
+    height: 106px;
+    background-color: rgba(238, 228, 218, 0.35);
+    border-radius: 3px;
+}
+.grid-cell:not(:nth-child(4n + 0)) {
+    margin-right: 15px;
+}
+.tiles-container {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+}
+.tile {
+    position: absolute;
+    width: 106px;
+    height: 106px;
+    line-height: 106px;
+    text-align: center;
+    transition: 1000ms ease-in-out;
+    transition-property: transform;
+}
+.tile-inner {
+    border-radius: 3px;
+    font-size: 55px;
+    font-weight: bold;
+}
+.tile-new .tile-inner {
+    animation: appear 200ms ease 1000ms;
+    animation-fill-mode: forwards  ;
+}
+.tile-merged {
+    z-index: 2;
+}
+.tile-merged .tile-inner {
+    animation: pop 200ms ease 1000ms;
+    animation-fill-mode: forwards;
 }
