@@ -68,7 +68,7 @@
 }
 .tile-new .tile-inner {
     animation: appear 200ms ease 1000ms;
-    animation-fill-mode: forwards  ;
+    animation-fill-mode: backwards;
 }
 .tile-merged {
     z-index: 2;

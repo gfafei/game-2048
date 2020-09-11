@@ -54,11 +54,7 @@ const Tile = (props) => {
   const pos = {
     transform: `translate(${tile.col * (TILE_SIZE + TILE_MARGIN)}px, ${tile.row * (TILE_SIZE + TILE_MARGIN)}px)`,
   }
-  React.useEffect(() => {
-    return () => {
-      console.log('unmounted', tile.value)
-    }
-  }, [])
+
   return (
     <div className={`tile${tile.isMerged ? ' tile-merged' : ''}${tile.isNew ? ' tile-new' : ''}`} style={pos}>
       <div className="tile-inner" style={style}>
@@ -70,100 +66,73 @@ const Tile = (props) => {
 
 const initialState = {
   size: 4,
-  tiles: [
-    {
-      id: uuid(),
-      row: 0,
-      col: 0,
-      value: 2
-    },
-    {
-      id: uuid(),
-      row: 0,
-      col: 3,
-      value: 4
-    },
-    {
-      id: uuid(),
-      row: 0,
-      col: 2,
-      value: 2
-    }
+  grid: [
+    [null, null, null, null],
+    [null, null, null, null],
+    [null, null, null, null],
+    [null, null, null, null]
   ]
 }
 
-const getTileMap = (tiles, size) => {
-  const map = [];
+const addRandomTile = (grid) => {
+  const size = grid.length;
+  const availableCells = [];
   for (let i = 0; i < size; i++) {
-    const row = [];
-    map.push(row)
     for (let j = 0; j < size; j++) {
-      row.push(null)
+      if (!grid[i][j]) {
+        availableCells.push({ row: i, col: j });
+      }
     }
   }
-  tiles.forEach(tile => {
-    const {col, row} = tile;
-    delete tile.isNew;
-    delete tile.isMerged;
-    delete tile.from;
-    map[row][col] = tile;
-  })
-  return map;
-}
-const addRandomTile = (map, tiles, size) => {
-  return;
-  const availableLength = size * size - tiles.length;
-  const randomIdx = Math.floor(Math.random() * availableLength);
+  const randomIdx = Math.floor(Math.random() * availableCells.length);
   const value = Math.random() > 0.25 ? 2 : 4;
+  const cell = availableCells[randomIdx];
+  grid[cell.row][cell.col] = {
+    id: uuid(),
+    isNew: true,
+    value: value,
+    row: cell.row,
+    col: cell.col
+  }
+}
 
-  let idx = 0;
+const move = (grid, rotate, reverse) => {
+  const size = grid.length;
   for (let i = 0; i < size; i++) {
-    for (let j = 0; j < size; j++) {
-      if (!map[i][j]) {
-        idx++;
-        if (idx === randomIdx) {
-          map[i][j] = {
-            id: uuid(),
-            isNew: true,
-            value: value,
-            row: i,
-            col: j
-          }
-        }
+    let flag = false;
+    const from = reverse ? size - 1 : 0;
+    const to = reverse ? 0 : size - 1;
+    const step = reverse ? -1 : 1;
+    let j = from;
+    const row = rotate ? j : i;
+    const col = rotate ? i : j;
+    const prop = rotate ? 'row' : 'col';
+    let condition = reverse ? j >= 0 : j <= size - 1;
+    while (condition) {
+      if (grid[row][col]) {
+
       }
+      j += step;
     }
   }
 }
-const getTilesFromMap = (map, size) => {
-  const tiles = [];
-  for (let i = 0; i < size; i++) {
-    for (let j = 0; j < size; j++) {
-      if (map[i][j]) {
-        tiles.push(map[i][j])
-        if (map[i][j].from) {
-          tiles.push(map[i][j].from)
-        }
-      }
-    }
-  }
-  return tiles;
-}
-
 const reducer = (state, action) => {
-  const { size, tiles } = state;
-  const map = getTileMap(state.tiles, size);
+  const { size, grid } = state;
   switch (action.type) {
+    case 'addRandomTile':
+      addRandomTile(grid)
+      return { ...state, grid }
     case 'moveUp':
       for (let i = 0; i < size; i++) {
         let flag = false;
         for (let j = 0; j < size ; j++) {
-          if (map[j][i] && j > 0) {
-            const tile = map[j][i];
-            let v = map[j][i].value;
+          if (grid[j][i] && j > 0) {
+            const tile = grid[j][i];
+            let v = grid[j][i].value;
             for (let k = tile.row - 1; k >= 0; k--) {
-              if (!map[k][i]) tile.row = k;
-              if (map[k][i]) {
-                if (map[k][i].value === v && !flag) {
+              if (!grid[k][i]) tile.row = k;
+              if (grid[k][i]) {
+                if (grid[k][i].value === v && !flag) {
                   tile.row = k;
                   tile.value *= 2;
                   tile.isMerged = true;
@@ -174,17 +143,17 @@ const reducer = (state, action) => {
               }
             }
             if (tile.row !== j) {
-              map[tile.row][i] = tile;
-              map[j][i] = null;
+              grid[tile.row][i] = tile;
+              grid[j][i] = null;
             }
           }
         }
       }
-      addRandomTile(map, tiles, size)
-      return { ...state, tiles: getTilesFromMap(map, size) };
+      addRandomTile(grid)
+      return { ...state, grid };
     case 'moveRight':
       for (let i = 0; i < size; i++) {
-        const row = map[i];
+        const row = grid[i];
         let flag = false;
         for (let j = size - 1; j >= 0; j--) {
           if (row[j] && j < size - 1) {
@@ -205,21 +174,21 @@ const reducer = (state, action) => {
           }
         }
       }
-      addRandomTile(map, tiles, size)
-      return { ...state, tiles: getTilesFromMap(map, size) };
+      addRandomTile(grid)
+      return { ...state, grid };
     case 'moveDown':
       for (let i = 0; i < size; i++) {
         let flag = false;
         for (let j = size - 1; j >= 0; j--) {
-          if (map[j][i] && j < size - 1) {
-            const tile = map[j][i];
+          if (grid[j][i] && j < size - 1) {
+            const tile = grid[j][i];
             for (let k = j + 1; k < size; k++) {
-              if (!map[k][i]) tile.row = k;
-              if (map[k][i]) {
-                if (map[k][i].value === tile.value && !flag) {
+              if (!grid[k][i]) tile.row = k;
+              if (grid[k][i]) {
+                if (grid[k][i].value === tile.value && !flag) {
                   tile.row = k;
-                  map[k][i].value *= 2;
-                  map[k][i].isMerged = true;
+                  grid[k][i].value *= 2;
+                  grid[k][i].isMerged = true;
                   flag = true;
                 } else {
                   break;
@@ -229,11 +198,11 @@ const reducer = (state, action) => {
           }
         }
       }
-      addRandomTile(map, tiles, size)
-      return { ...state, tiles: getTilesFromMap(map, size) };
+      addRandomTile(grid)
+      return { ...state, grid };
     case 'moveLeft':
       for (let i = 0; i < size; i++) {
-        const row = map[i];
+        const row = grid[i];
         let flag = false;
         for (let j = 0; j < size; j++) {
           if (row[j] && j > 0) {
@@ -264,15 +233,15 @@ const reducer = (state, action) => {
           }
         }
       }
-      addRandomTile(map, tiles, size)
-      return { ...state, tiles: getTilesFromMap(map, size) };
+      addRandomTile(grid)
+      return { ...state, grid };
     default:
       return state;
   }
 }
 const App = () => {
   const [state, dispatch] = React.useReducer(reducer, initialState, undefined);
-  const { size, tiles } = state;
+  const { size, grid } = state;
   const cells = React.useMemo(() => {
     let res = [];
     for (let i = 0; i < Math.pow(state.size, 2); i++) {
@@ -301,21 +270,26 @@ const App = () => {
       }
     }
     window.addEventListener('keydown', handler)
+    dispatch({ type: 'addRandomTile' });
     return () => {
       window.removeEventListener('keydown', handler)
     }
   }, [])
+  const tiles = [];
+  grid.forEach(row => {
+    row.forEach(tile => {
+      if (tile) {
+        tiles.push(<Tile key={tile.id} tile={tile}/>)
+      }
+    })
+  })
   return (
     <div className="app">
       <div className="board-container">
         <div className="grid-container">
           {cells}
         </div>
-        <div className="tiles-container">
-          {
-            tiles.map(tile => <Tile key={tile.id} tile={tile}/>)
-          }
-        </div>
+        <div className="tiles-container">{tiles}</div>
       </div>
     </div>
   )
