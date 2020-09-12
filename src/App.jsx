@@ -30,6 +30,7 @@ const mix = (color1, color2, weight) => {
 }
 
 const getStyle = (value) => {
+  let fontSize = 55;
   let color = '#776e65';
   const exponent = Math.log(value) / Math.log(2);
   const goldPercent = (exponent - 1) / 10;
@@ -43,8 +44,14 @@ const getStyle = (value) => {
   if (isBright) {
     color = '#f9f6f2';
   }
+  if (value >= 100) {
+    fontSize = 45
+  }
+  if (value >= 1000) {
+    fontSize = 35
+  }
 
-  return { color, backgroundColor }
+  return { color, backgroundColor, fontSize }
 }
 const Tile = (props) => {
   const { tile } = props;

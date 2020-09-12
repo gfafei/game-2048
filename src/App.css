@@ -1,3 +1,7 @@
+body {
+    margin: 0;
+    background-color: #faf8ef;
+}
 @keyframes appear {
     0% {
         opacity: 0;
@@ -21,6 +25,9 @@
     100% {
         transform: scale(1);
     }
+}
+.app {
+    margin-top: 100px;
 }
 .board-container {
     width: 499px;
@@ -58,22 +65,21 @@
     height: 106px;
     line-height: 106px;
     text-align: center;
-    transition: 1000ms ease-in-out;
+    transition: 100ms ease-in-out;
     transition-property: transform;
 }
 .tile-inner {
     border-radius: 3px;
-    font-size: 55px;
     font-weight: bold;
 }
 .tile-new .tile-inner {
-    animation: appear 200ms ease 1000ms;
+    animation: appear 200ms ease 100ms;
     animation-fill-mode: backwards;
 }
 .tile-merged {
     z-index: 2;
 }
 .tile-merged .tile-inner {
-    animation: pop 200ms ease 1000ms;
+    animation: pop 200ms ease 100ms;
     animation-fill-mode: forwards;
 }
