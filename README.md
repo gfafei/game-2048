@@ -1,3 +1,4 @@
 ## TODO
-- use map  structure instead of tiles array
-- value should change after animation 
+- win and lost tip
+- local storage
+- restart
