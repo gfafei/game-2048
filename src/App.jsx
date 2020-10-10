@@ -78,10 +78,10 @@ const Tile = (props) => {
 const initialState = {
   size: 4,
   grid: [
-    [{ id: uuid(), row: 0, col: 0, value: 2 }, null, null, null],
-    [{ id: uuid(), row: 1, col: 0, value: 2 }, null, null, null],
-    [{ id: uuid(), row: 2, col: 0, value: 2 }, null, null, null],
-    [{ id: uuid(), row: 3, col: 0, value: 2 }, null, null, null]
+    [null, null, null, null],
+    [null, null, null, null],
+    [null, null, null, null],
+    [null, null, null, null]
   ]
 }
 
@@ -210,6 +210,7 @@ const App = () => {
   }, [size]);
 
   React.useEffect(() => {
+    dispatch({ type: 'addRandomTile' });
     const dispatchMove = (direction) => {
       dispatch({ type: 'prepareTiles' });
       setTimeout(() => dispatch({ type: `move${direction}` }), 0)
@@ -231,7 +232,6 @@ const App = () => {
       }
     }
     window.addEventListener('keydown', handler)
-    dispatch({ type: 'addRandomTile' });
     return () => {
       window.removeEventListener('keydown', handler)
     }
