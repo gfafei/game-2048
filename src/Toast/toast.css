@@ -1,0 +1,35 @@
+@keyframes toast-show {
+    0% {
+        opacity: 0;
+        margin-top: 0;
+    }
+    100% {
+        opacity: 1;
+        margin-top: 20px;
+    }
+}
+
+.ui-toast-wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    pointer-events: none;
+    padding: 10px 30px 30px 30px;
+    z-index: 9999;
+}
+.ui-toast {
+    align-self: center;
+    background-color: #fff;
+    z-index: 1;
+    pointer-events: all;
+    padding: 13px 18px;
+    box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.20);
+    border-radius: 4px;
+    color: #2B3139;
+    margin-top: 20px;
+    animation: toast-show 200ms forwards;
+}
