@@ -6,6 +6,9 @@ import { loadGrid, saveGrid } from './storage';
 
 const initialState = {
   size: 4,
+  score: 0,
+  bestScore: 0,
+  biggest: 0,
   grid: [
     [null, null, null, null],
     [null, null, null, null],
@@ -15,7 +18,7 @@ const initialState = {
 }
 
 const App = () => {
-  const [state, dispatch] = React.useReducer(reducer, initialState, undefined);
+  const [state, dispatch] = React.useReducer(reducer, initialState);
   const { size, grid } = state;
   const cells = React.useMemo(() => {
     let res = [];
@@ -36,21 +39,21 @@ const App = () => {
     }
     const dispatchMove = (direction) => {
       dispatch({ type: 'prepareTiles' });
-      setTimeout(() => dispatch({ type: `move${direction}` }), 0)
+      setTimeout(() => dispatch({ type: 'move', payload: direction }), 0)
     }
     const handler = (e) => {
       switch (e.key) {
         case 'ArrowUp':
-          dispatchMove('Up')
+          dispatchMove('up')
           break;
         case 'ArrowRight':
-          dispatchMove('Right')
+          dispatchMove('right')
           break;
         case 'ArrowDown':
-          dispatchMove('Down')
+          dispatchMove('down')
           break;
         case 'ArrowLeft':
-          dispatchMove('Left')
+          dispatchMove('left')
           break;
       }
     }
@@ -59,6 +62,12 @@ const App = () => {
       window.removeEventListener('keydown', handler)
     }
   }, [])
+  React.useEffect(() => {
+    saveGrid(state.grid);
+  }, [state])
+  React.useEffect(() => {
+    //TODO 判断2048
+  }, [state.score])
   const tiles = [];
   grid.forEach(row => {
     row.forEach(tile => {

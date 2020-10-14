@@ -23,8 +23,10 @@ const addRandomTile = (grid) => {
   }
 }
 
-const move = (grid, direction) => {
+const move = (state, direction) => {
+  const grid = state.grid;
   const size = grid.length;
+  let score = 0;
   let moved = false;
   const vectors = {
     up: [1, 0],
@@ -63,7 +65,12 @@ const move = (grid, direction) => {
             grid[tile.row][tile.col] = tile;
           } else {
             grid[tile.row][tile.col].isMerged = true;
-            grid[tile.row][tile.col].value *= 2;
+            const value = grid[tile.row][tile.col].value * 2;
+            grid[tile.row][tile.col].value = value;
+            score += value;
+            if (value > state.biggest) {
+              state.biggest = value;
+            }
             if (reverse) {
               grid[tile.row][tile.col].before = tile;
             } else {
@@ -78,50 +85,50 @@ const move = (grid, direction) => {
   if (moved) {
     addRandomTile(grid)
   }
+  state.score += score;
+  if (state.score > state.bestScore) {
+    state.bestScore = state.score;
+  }
+}
+
+const prepareTiles = (grid) => {
+  grid.forEach(row => {
+    row.forEach(tile => {
+      if (tile) {
+        delete tile.isNew
+        delete tile.isMerged
+        delete tile.before
+        delete tile.after
+      }
+    })
+  })
 }
 const reducer = (state, action) => {
   const { grid } = state;
-  let res = state;
   switch (action.type) {
     case 'setGrid':
-      res = { ...state, grid: action.payload }
-      break;
+      return { ...state, grid: action.payload }
     case 'addRandomTile':
-      addRandomTile(grid)
-      res = { ...state, grid }
-      break;
-    case 'moveUp':
-      move(grid, 'up');
-      res = { ...state, grid };
-      break;
-    case 'moveRight':
-      move(grid, 'right')
-      res = { ...state, grid };
-      break;
-    case 'moveDown':
-      move(grid, 'down')
-      res = { ...state, grid };
-      break;
-    case 'moveLeft':
-      move(grid, 'left')
-      res = { ...state, grid };
-      break;
+      addRandomTile(grid);
+      return { ...state }
+    case 'move':
+      move(state, action.payload);
+      return { ...state };
     case 'prepareTiles':
+      prepareTiles(grid);
+      return { ...state }
+    case 'restart':
+      const size = grid.length;
       grid.forEach(row => {
-        row.forEach(tile => {
-          if (tile) {
-            delete tile.isNew
-            delete tile.isMerged
-            delete tile.before
-            delete tile.after
-          }
-        })
+        for (let i = 0; i< size; i++) {
+          row[i] = null;
+        }
       })
-      res = { ...state, grid }
-      break;
+      addRandomTile(grid);
+      return { ...state }
+    default:
+      return state;
   }
-  saveGrid(res.grid);
-  return res;
 }
 
 export default reducer;
