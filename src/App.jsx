@@ -2,6 +2,7 @@ import './App.css'
 import React from 'react';
 import Tile from './Tile';
 import reducer from "./reducer";
+import { loadGrid, saveGrid } from './storage';
 
 const initialState = {
   size: 4,
@@ -27,7 +28,12 @@ const App = () => {
   }, [size]);
 
   React.useEffect(() => {
-    dispatch({ type: 'addRandomTile' });
+    const cachedGrid = loadGrid();
+    if (cachedGrid) {
+       dispatch({ type: 'setGrid', payload: cachedGrid });
+    } else {
+      dispatch({ type: 'addRandomTile' });
+    }
     const dispatchMove = (direction) => {
       dispatch({ type: 'prepareTiles' });
       setTimeout(() => dispatch({ type: `move${direction}` }), 0)

@@ -1,4 +1,5 @@
 import uuid from "./uuid";
+import { saveGrid } from "./storage";
 
 const addRandomTile = (grid) => {
   const size = grid.length;
@@ -80,22 +81,31 @@ const move = (grid, direction) => {
 }
 const reducer = (state, action) => {
   const { grid } = state;
+  let res = state;
   switch (action.type) {
+    case 'setGrid':
+      res = { ...state, grid: action.payload }
+      break;
     case 'addRandomTile':
       addRandomTile(grid)
-      return { ...state, grid }
+      res = { ...state, grid }
+      break;
     case 'moveUp':
       move(grid, 'up');
-      return { ...state, grid };
+      res = { ...state, grid };
+      break;
     case 'moveRight':
       move(grid, 'right')
-      return { ...state, grid };
+      res = { ...state, grid };
+      break;
     case 'moveDown':
       move(grid, 'down')
-      return { ...state, grid };
+      res = { ...state, grid };
+      break;
     case 'moveLeft':
       move(grid, 'left')
-      return { ...state, grid };
+      res = { ...state, grid };
+      break;
     case 'prepareTiles':
       grid.forEach(row => {
         row.forEach(tile => {
@@ -107,10 +117,11 @@ const reducer = (state, action) => {
           }
         })
       })
-      return { ...state, grid }
-    default:
-      return state;
+      res = { ...state, grid }
+      break;
   }
+  saveGrid(res.grid);
+  return res;
 }
 
 export default reducer;
