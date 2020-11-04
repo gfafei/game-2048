@@ -2,7 +2,7 @@ import './App.css'
 import React from 'react';
 import Tile from './Tile';
 import reducer from "./reducer";
-import { loadGrid, saveGrid } from './storage';
+import { loadState, saveState } from './storage';
 
 const initialState = {
   size: 4,
@@ -19,7 +19,7 @@ const initialState = {
 
 const App = () => {
   const [state, dispatch] = React.useReducer(reducer, initialState);
-  const { size, grid } = state;
+  const { size, grid, score, bestScore, biggest } = state;
   const cells = React.useMemo(() => {
     let res = [];
     for (let i = 0; i < Math.pow(state.size, 2); i++) {
@@ -31,9 +31,9 @@ const App = () => {
   }, [size]);
 
   React.useEffect(() => {
-    const cachedGrid = loadGrid();
-    if (cachedGrid) {
-       dispatch({ type: 'setGrid', payload: cachedGrid });
+    const cachedState = loadState();
+    if (cachedState) {
+       dispatch({ type: 'setState', payload: cachedState });
     } else {
       dispatch({ type: 'addRandomTile' });
     }
@@ -63,11 +63,14 @@ const App = () => {
     }
   }, [])
   React.useEffect(() => {
-    saveGrid(state.grid);
+    saveState(state);
   }, [state])
   React.useEffect(() => {
     //TODO 判断2048
   }, [state.score])
+  const handleRestart = () => {
+    dispatch({ type: 'restart' });
+  }
   const tiles = [];
   grid.forEach(row => {
     row.forEach(tile => {
@@ -84,6 +87,17 @@ const App = () => {
   })
   return (
     <div className="app">
+      <div className="heading">
+        <div className="btn-reset" onClick={handleRestart}>重&nbsp;&nbsp;来</div>
+        <div className="pane-score">
+          <div className="score-label">得分</div>
+          <div className="score">{score}</div>
+        </div>
+        <div className="pane-score">
+          <div className="score-label">最高得分</div>
+          <div className="score">{bestScore}</div>
+        </div>
+      </div>
       <div className="board-container">
         <div className="grid-container">
           {cells}

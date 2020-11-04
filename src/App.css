@@ -1,6 +1,7 @@
 body {
     margin: 0;
     background-color: #faf8ef;
+    font-family: "Clear Sans", "Helvetica Neue", Arial, sans-serif;
 }
 @keyframes appear {
     0% {
@@ -82,4 +83,41 @@ body {
 .tile-merged .tile-inner {
     animation: pop 200ms ease 100ms;
     animation-fill-mode: forwards;
+}
+
+.heading {
+    width: 500px;
+    margin: 30px auto;
+    display: flex;
+    align-items: center;
+}
+.btn-reset {
+    margin-right: auto;
+    font-weight: bold;
+    background-color: #8f7a66;
+    line-height: 40px;
+    color: #fff;
+    width: 125px;
+    text-align: center;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.pane-score {
+    text-align: center;
+    background-color: #bbada0;
+    border-radius: 4px;
+    width: 80px;
+}
+.pane-score:not(:last-child) {
+    margin-right: 10px;
+}
+.score-label {
+    color: #eee4da;
+    font-size: 13px;
+    margin: 5px 0;
+}
+.score {
+    font-size: 24px;
+    color: #fff;
+    font-weight: bold;
 }

@@ -1,5 +1,5 @@
 import uuid from "./uuid";
-import { saveGrid } from "./storage";
+import { saveState } from "./storage";
 
 const addRandomTile = (grid) => {
   const size = grid.length;
@@ -108,6 +108,8 @@ const reducer = (state, action) => {
   switch (action.type) {
     case 'setGrid':
       return { ...state, grid: action.payload }
+    case 'setState':
+      return { ...state, ...action.payload }
     case 'addRandomTile':
       addRandomTile(grid);
       return { ...state }
@@ -125,7 +127,7 @@ const reducer = (state, action) => {
         }
       })
       addRandomTile(grid);
-      return { ...state }
+      return { ...state, score: 0 }
     default:
       return state;
   }
