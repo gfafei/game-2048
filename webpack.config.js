@@ -5,8 +5,7 @@ module.exports = {
   entry: {
     app: './src/index.jsx'
   },
-  mode: "development",
-  devtool: 'inline-source-map',
+  mode: "production",
   module: {
     rules: [
       {
