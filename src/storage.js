@@ -1,5 +1,5 @@
-export const loadGrid = () => {
-  const string = localStorage.getItem('grid');
+export const loadState = () => {
+  const string = localStorage.getItem('game-state');
   try {
     return JSON.parse(string)
   } catch(e) {
@@ -7,21 +7,10 @@ export const loadGrid = () => {
     return null;
   }
 }
-export const saveGrid = (grid) => {
-  let size = grid.length;
-  let isEmpty = true;
-  for(let i = 0; i < size; i++) {
-    const row = grid[i];
-    for (let j = 0; j < size; j++) {
-      if (row[j]) {
-        isEmpty = false;
-        break;
-      }
-    }
-  }
-  if (isEmpty) {
-    localStorage.setItem('grid', 'null')
-  } else {
-    localStorage.setItem('grid', JSON.stringify(grid))
-  }
+export const saveState = (state) => {
+  localStorage.setItem('game-state', JSON.stringify({
+    grid: state.grid,
+    score: state.score,
+    bestScore: state.bestScore
+  }))
 }
